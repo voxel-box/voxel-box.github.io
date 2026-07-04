@@ -32,7 +32,7 @@
           <h1>Ping us.</h1>
           <p class="lead">Send a message straight to the team below, or jump into Discord — whatever's easier. Both reach the same people.</p>
         </div>
-        <aside class="panel" style="padding:22px" data-reveal data-delay=".08s"><dl class="kv"><dt>email</dt><dd><a href="mailto:contact@voxelbox.org">contact@voxelbox.org</a></dd><dt>discord</dt><dd>discord.gg/mpeZ62uEEp</dd></dl></aside>
+        <aside class="panel" style="padding:22px" data-reveal data-delay=".08s"><dl class="kv"><dt>email</dt><dd><a href="#" data-vb-mail data-u="contact" data-d="voxelbox.org">contact [at] voxelbox.org</a></dd><dt>discord</dt><dd>discord.gg/mpeZ62uEEp</dd></dl></aside>
       </div>
     </section>
 
@@ -50,7 +50,7 @@
           </div>
         </form>
       </div>
-      <p class="dim" data-reveal style="margin-top:14px;font-family:var(--f-mono);font-size:.78rem">Goes straight to <a href="mailto:contact@voxelbox.org">contact@voxelbox.org</a>. We read everything — replies come from a real person.</p>
+      <p class="dim" data-reveal style="margin-top:14px;font-family:var(--f-mono);font-size:.78rem">Goes straight to <a href="#" data-vb-mail data-u="contact" data-d="voxelbox.org">contact [at] voxelbox.org</a>. We read everything — replies come from a real person.</p>
     </div>
   </section>
 
@@ -101,5 +101,6 @@
     </section>
   </main>
   <div data-shell-footer></div><script src="voxel.js" defer></script>
+<script>document.querySelectorAll("[data-vb-mail]").forEach(function(a){var m=a.dataset.u+"@"+a.dataset.d;a.href="mailto:"+m;a.textContent=m;});</script>
 </body>
 </html>

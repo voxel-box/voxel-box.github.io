@@ -586,58 +586,59 @@
     "use strict";
 
     /* ---------- data ---------- */
+    const DISCORD = "https://discord.gg/mpeZ62uEEp";
+    // Connection details live in Discord on purpose — never put addresses here.
     const SERVERS = [
-      { name: "Voxelbox-Minecraft", tag: "Survival Craft", ip: "0.0.0.0:25565" },
-      { name: "Voxelbox-StarRupture", tag: "Industrial Sci-Fi", ip: "0.0.0.0:7777" },
-      { name: "Voxelbox-BeamMP", tag: "Driving Sim", ip: "0.0.0.0:30814" },
-      { name: "Voxelbox-SOTF", tag: "Horror Survival", ip: "0.0.0.0:8766" },
-      { name: "Voxelbox-Enshrouded", tag: "Fantasy Survival", ip: "0.0.0.0:15637" },
-      { name: "Voxelbox-Palworld", tag: "Creature Co-op", ip: "0.0.0.0:8211" },
-      { name: "Voxelbox-Satisfactory", tag: "Factory Builder", ip: "0.0.0.0:7778" },
+      { name: "Voxelbox-Minecraft", tag: "Survival / Modded", blurb: "Build a world worth coming back to." },
+      { name: "Voxelbox-Palworld", tag: "Co-op Survival", blurb: "Catch, build, and grind — together." },
+      { name: "Voxelbox-Satisfactory", tag: "Factory Co-op", blurb: "Automate the whole planet. Together." },
+      { name: "Voxelbox-Enshrouded", tag: "Survival Co-op", blurb: "Survive the shroud as a crew." },
+      { name: "Voxelbox-ATS", tag: "Convoy Nights", blurb: "Roll out with the convoy." },
+      { name: "Voxelbox-BeamMP", tag: "Driving Sessions", blurb: "Drive, crash, repeat." },
+      { name: "Voxelbox-FiveM", tag: "GTA V Roleplay", blurb: "Your city, your story." },
     ];
 
     const RULES = {
       "Voxelbox-Minecraft": [
-        "No griefing, stealing, or unauthorized base entry.",
-        "Use respectful chat; hate speech and spam are zero tolerance.",
-        "Keep farms optimized to prevent lag and avoid chunk flooding.",
-        "Event arenas are safe zones unless flagged otherwise.",
-      ],
-      "Voxelbox-StarRupture": [
-        "Claimed outposts require permission before mining or building.",
-        "Coordinate large raids in faction channels to prevent friendly fire.",
-        "No exploitative resource duplication or physics abuse.",
-        "Respect PvE event timers and rotate boss loot fairly.",
-      ],
-      "Voxelbox-BeamMP": [
-        "Drive responsibly in cruise zones; no intentional ramming.",
-        "Follow event marshal directions during races or drift nights.",
-        "Use appropriate vehicles for track categories.",
-        "Report crashes or desync issues in the support channel.",
-      ],
-      "Voxelbox-SOTF": [
-        "No combat logging; stay in session until clear.",
-        "Raids must be announced in global chat before breaching.",
-        "Respect cooldowns on high-tier loot routes.",
-        "Solo players have a protected start period.",
-      ],
-      "Voxelbox-Enshrouded": [
-        "Do not tamper with flame altars belonging to other groups.",
-        "Keep shared quest hubs stocked and organized.",
-        "Cross-party trading should be fair and transparent.",
-        "Keep the shroud clean of bug exploits or terrain abuse.",
+        "Keep farms/redstone reasonable so they don't tank performance.",
+        "Ask before altering shared roads, hubs, or community projects.",
+        "Use mods and automation only if clearly allowed.",
+        "Don't block major routes, core resources, or spawn access.",
       ],
       "Voxelbox-Palworld": [
-        "No capture trapping or griefing of other players' pals.",
-        "Follow trading etiquette and keep markets scam-free.",
-        "Base territories require permission before expansion nearby.",
-        "Report glitches or duplicate pals to staff immediately.",
+        "Avoid excessive breeding/automation that creates lag.",
+        "Respect shared agreements on boss progression and resources.",
+        "Follow any posted team or guild setup.",
       ],
       "Voxelbox-Satisfactory": [
-        "Shared factory zones must stay organized and labeled.",
-        "Coordinate mega-builds with engineering leads.",
-        "Power grid changes require a heads-up in ops chat.",
-        "No dismantling others' machines without approval.",
+        "Don't rip up shared factories or train lines without checking in.",
+        "Label major production areas so others understand them.",
+        "Coordinate nuclear, power, and high-load projects.",
+        "Avoid abandoned half-finished builds in key areas.",
+      ],
+      "Voxelbox-Enshrouded": [
+        "Don't rush key progression without agreement.",
+        "Be careful with shared chests, gear, and stockpiles.",
+        "Keep base edits collaborative in public areas.",
+        "Treat boss attempts as a community activity.",
+      ],
+      "Voxelbox-ATS": [
+        "Listen to convoy hosts and route notes.",
+        "Don't intentionally ram, block, or troll drivers.",
+        "Show up with the right mods, DLC, and setup.",
+        "Communicate if you need to leave a convoy.",
+      ],
+      "Voxelbox-BeamMP": [
+        "Don't intentionally ram, grief, or disrupt sessions.",
+        "Read the current session/event notes before joining.",
+        "Respect posted route, event, or host guidance.",
+        "Use support if your setup causes repeated issues.",
+      ],
+      "Voxelbox-FiveM": [
+        "Stay in character in RP zones; keep meta-gaming out of the city.",
+        "No RDM/VDM — violence needs a story reason.",
+        "Don't exploit scripts, dupe, or abuse game bugs.",
+        "Follow staff and posted city rules — they're the canon.",
       ],
     };
 
@@ -675,26 +676,17 @@
         h: 420,
         render() {
           return (
-            "<h4>Network Status</h4><p>Click an address to copy it.</p>" +
+            `<h4>Network Status</h4><p>Connection details stay in the
+            <a href="${DISCORD}" style="color: var(--accent-2)">Discord</a> so they're always current.</p>` +
             SERVERS.map(
               (s) => `
               <div class="server-row">
                 <span class="dot"></span>
                 <div class="info"><strong>${s.name}</strong><em>${s.tag}</em></div>
-                <code title="Copy address">${s.ip}</code>
+                <a href="${DISCORD}"><code title="${s.blurb}">join →</code></a>
               </div>`
             ).join("")
           );
-        },
-        onOpen(body) {
-          body.querySelectorAll("code").forEach((c) => {
-            c.addEventListener("click", () => {
-              navigator.clipboard && navigator.clipboard.writeText(c.textContent);
-              const old = c.textContent;
-              c.textContent = "copied!";
-              setTimeout(() => (c.textContent = old), 900);
-            });
-          });
         },
       },
       rules: {
@@ -776,7 +768,10 @@
           };
           const commands = {
             help: () => print("commands: help, servers, rules <server>, theme <name>, themes, about, clear"),
-            servers: () => SERVERS.forEach((s) => print(`  ${s.name.padEnd(24)} ${s.ip}`)),
+            servers: () => {
+              SERVERS.forEach((s) => print(`  ${s.name.padEnd(24)} ${s.tag}`));
+              print("  join info lives in Discord: discord.gg/mpeZ62uEEp");
+            },
             themes: () => print("  " + THEMES.map((t) => t.id).join(", ")),
             about: () => print("Hermes OS — the Voxelbox network hub. Fast worlds, fair rules, friendly admins."),
             clear: () => (out.innerHTML = ""),

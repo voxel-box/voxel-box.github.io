@@ -38,8 +38,9 @@ edited (by people or AI agents). Before this, the site's source only existed on 
 ## Notes for editors
 
 - Cache-busting query strings (`voxel.css?v=8`) and Cloudflare's email-protection
-  script were stripped during capture; the contact email appears in plain text
-  (`contact@voxelbox.org`) in `contact.html`.
-- This site's server lineup (includes FiveM and American Truck Simulator) is newer
-  than the older landing page at the root of this repo (which lists StarRupture and
-  SOTF) — voxelbox.org is the canonical, up-to-date list.
+  script were stripped during capture; the contact email is JS-assembled at page load (bot-resistant)
+  in `contact.html`.
+- voxelbox.org is the canonical source for the server lineup; the landing page and
+  Hermes OS at the root of this repo mirror it and must be kept in sync.
+- Connection details (IPs/ports) are deliberately absent everywhere — join info
+  lives in the Discord so it stays current and off the public record.

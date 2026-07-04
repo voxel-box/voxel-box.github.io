@@ -31,13 +31,17 @@ verify changes by opening the HTML file in a browser.
 
 1. **Keep pages self-contained.** No CDNs, no external fonts/scripts/frameworks.
    Inline everything. This is deliberate — the site must work with zero dependencies.
-2. **Keep server data in sync.** Server names/IPs/rules exist in BOTH `index.html`
+2. **Keep server data in sync.** Server names/tags/rules exist in BOTH `index.html`
    (markup) and `hermes/index.html` (`SERVERS`/`RULES` constants). Change both.
    The canonical, most current server lineup is the one on voxelbox.org
    (`voxelbox-org/servers.html`).
-3. **Don't commit secrets or chat logs.** This repo is public. Access tokens,
+3. **Never publish server addresses.** No IPs, ports, hostnames, or connection
+   strings anywhere in this repo — join info lives in the Discord on purpose so it
+   stays current and off the public record. Point people at
+   https://discord.gg/mpeZ62uEEp instead.
+4. **Don't commit secrets or chat logs.** This repo is public. Access tokens,
    private conversations, and personal data must never be committed.
-4. **Match the existing style.** 2-space indent, CSS variables for all colors,
+5. **Match the existing style.** 2-space indent, CSS variables for all colors,
    `color-mix(in srgb, var(--accent-1) N%, transparent)` for accent tints,
    vanilla JS (no TypeScript, no modules), double quotes in JS.
 
