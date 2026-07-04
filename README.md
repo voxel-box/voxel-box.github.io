@@ -23,9 +23,11 @@ The website for the **Voxelbox game server network**, served by GitHub Pages at
 
 ## The network
 
-Seven servers: Minecraft, StarRupture, BeamMP, Sons of the Forest, Enshrouded,
-Palworld, and Satisfactory. Server names, IPs, and rules live in two places that
-must be kept in sync when they change:
+Seven servers: Minecraft, Palworld, Satisfactory, Enshrouded, American Truck
+Simulator, BeamMP, and FiveM. Connection details are **deliberately not published**
+— join info lives in the [Discord](https://discord.gg/mpeZ62uEEp) so it stays
+current and off the public record. Server names, tags, and rules live in two
+places that must be kept in sync when they change:
 
 1. `index.html` — the `#servers` and `#rules` sections
 2. `hermes/index.html` — the `SERVERS` and `RULES` constants at the top of the script
