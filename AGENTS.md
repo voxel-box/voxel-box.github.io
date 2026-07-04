@@ -20,6 +20,11 @@ verify changes by opening the HTML file in a browser.
   2. **Data** (top of `<script>`): `SERVERS`, `RULES`, `THEMES` constants.
   3. **App registry**: the `APPS` object — each key is an app.
   4. **Window manager**: `openApp()`, dragging, z-order, taskbar chips.
+- `voxelbox-org/` — versioned source of the live **https://voxelbox.org** site
+  (captured 2026-07-04). 26 pages sharing `voxel.css`/`voxel.js`, plus a Three.js
+  voxel-world scene (`voxel-world.js`, ES module — needs HTTP, not `file://`).
+  NOTE: this directory is NOT auto-deployed to voxelbox.org — that domain is hosted
+  elsewhere; edits here must be uploaded to its host. See `voxelbox-org/README.md`.
 - `README.md` — human-facing overview.
 
 ## Hard rules
@@ -28,6 +33,8 @@ verify changes by opening the HTML file in a browser.
    Inline everything. This is deliberate — the site must work with zero dependencies.
 2. **Keep server data in sync.** Server names/IPs/rules exist in BOTH `index.html`
    (markup) and `hermes/index.html` (`SERVERS`/`RULES` constants). Change both.
+   The canonical, most current server lineup is the one on voxelbox.org
+   (`voxelbox-org/servers.html`).
 3. **Don't commit secrets or chat logs.** This repo is public. Access tokens,
    private conversations, and personal data must never be committed.
 4. **Match the existing style.** 2-space indent, CSS variables for all colors,

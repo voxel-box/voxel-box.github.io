@@ -9,6 +9,7 @@ The website for the **Voxelbox game server network**, served by GitHub Pages at
 | --- | --- |
 | `index.html` | The main Voxelbox site: server list with IPs, per-server Rules Hub, community section. |
 | `hermes/index.html` | **Hermes OS** — a browser "desktop" hub for the network: draggable windows, taskbar, start menu, and apps (Servers, Rules Hub, Notes, Terminal, About) plus a six-theme theming engine. |
+| `voxelbox-org/` | **Versioned source of the live https://voxelbox.org site** (26 pages: servers, 3D prints, community, support, policies, plus the Three.js voxel-world scene). See its [README](voxelbox-org/README.md). |
 | `AGENTS.md` | Instructions for AI coding agents working on this repo (conventions, architecture, how to extend things). |
 
 ## How it works
