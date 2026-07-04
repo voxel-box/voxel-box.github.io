@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="ember">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hermes OS | Voxelbox</title>
+  <style>
+    /* ============ THEME ENGINE ============
+       Every theme defines the same variable set.
+       Switch by setting data-theme on <html>;
+       choice persists in localStorage.        */
+    :root[data-theme="ember"] {
+      --accent-1: #ff8a00;
+      --accent-2: #ffb347;
+      --bg-1: #0f1115;
+      --bg-2: #1c1f26;
+      --bg-3: #2c323c;
+      --text: #f5f7fb;
+      --muted: #c7ccd6;
+      --desktop: radial-gradient(circle at 20% 15%, rgba(255, 138, 0, 0.22), transparent 40%),
+        linear-gradient(140deg, #2b2f38 0%, #121418 55%, #0c0d10 100%);
+      --window-glass: rgba(22, 24, 30, 0.92);
+      --accent-ink: #1a1a1a;
+    }
+    :root[data-theme="midnight"] {
+      --accent-1: #4f7cff;
+      --accent-2: #86a8ff;
+      --bg-1: #070a12;
+      --bg-2: #101522;
+      --bg-3: #1b2233;
+      --text: #eef2ff;
+      --muted: #aab4cf;
+      --desktop: radial-gradient(circle at 80% 10%, rgba(79, 124, 255, 0.25), transparent 45%),
+        linear-gradient(160deg, #131a2b 0%, #0a0e18 60%, #05070c 100%);
+      --window-glass: rgba(13, 18, 30, 0.92);
+      --accent-ink: #0a0e18;
+    }
+    :root[data-theme="frost"] {
+      --accent-1: #2dd4da;
+      --accent-2: #7eeaef;
+      --bg-1: #0a1416;
+      --bg-2: #122024;
+      --bg-3: #1c3036;
+      --text: #f0fbfc;
+      --muted: #a8c8cc;
+      --desktop: radial-gradient(circle at 30% 80%, rgba(45, 212, 218, 0.2), transparent 45%),
+        linear-gradient(150deg, #16282c 0%, #0b1518 55%, #060c0e 100%);
+      --window-glass: rgba(13, 26, 29, 0.92);
+      --accent-ink: #06282a;
+    }
+    :root[data-theme="verdant"] {
+      --accent-1: #3ecf6a;
+      --accent-2: #85e8a5;
+      --bg-1: #0b120c;
+      --bg-2: #142016;
+      --bg-3: #1f3323;
+      --text: #f1fbf3;
+      --muted: #adcbb4;
+      --desktop: radial-gradient(circle at 75% 75%, rgba(62, 207, 106, 0.18), transparent 45%),
+        linear-gradient(145deg, #18271b 0%, #0d150e 55%, #070c08 100%);
+      --window-glass: rgba(14, 24, 16, 0.92);
+      --accent-ink: #0a1f10;
+    }
+    :root[data-theme="synthwave"] {
+      --accent-1: #e14eca;
+      --accent-2: #ff8ae8;
+      --bg-1: #120a1a;
+      --bg-2: #1d1229;
+      --bg-3: #2e1d40;
+      --text: #fbeeff;
+      --muted: #cbaed8;
+      --desktop: radial-gradient(circle at 50% 0%, rgba(225, 78, 202, 0.25), transparent 50%),
+        linear-gradient(155deg, #26163a 0%, #140b20 55%, #0a0512 100%);
+      --window-glass: rgba(24, 14, 36, 0.92);
+      --accent-ink: #260820;
+    }
+    :root[data-theme="daylight"] {
+      --accent-1: #e86f00;
+      --accent-2: #ff8a00;
+      --bg-1: #f4f2ee;
+      --bg-2: #ffffff;
+      --bg-3: #e7e2da;
+      --text: #23272f;
+      --muted: #5d6470;
+      --desktop: radial-gradient(circle at 20% 15%, rgba(255, 138, 0, 0.18), transparent 45%),
+        linear-gradient(140deg, #fdf9f3 0%, #efe9e0 60%, #e2dbd0 100%);
+      --window-glass: rgba(255, 253, 250, 0.94);
+      --accent-ink: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--desktop);
+      color: var(--text);
+      user-select: none;
+      transition: background 0.4s ease;
+    }
+
+    /* ============ BOOT SCREEN ============ */
+    #boot {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      background: var(--bg-1);
+      transition: opacity 0.6s ease;
+    }
+
+    #boot.done {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .boot-logo {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: var(--accent-2);
+    }
+
+    .boot-logo small {
+      display: block;
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    .boot-bar {
+      width: min(320px, 70vw);
+      height: 6px;
+      border-radius: 999px;
+      background: var(--bg-3);
+      overflow: hidden;
+    }
+
+    .boot-bar div {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      animation: boot-fill 1.4s ease forwards;
+    }
+
+    @keyframes boot-fill {
+      to { width: 100%; }
+    }
+
+    /* ============ DESKTOP ============ */
+    #desktop {
+      position: fixed;
+      inset: 0 0 52px 0;
+      padding: 28px;
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(auto-fill, 96px);
+      justify-content: start;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .icon {
+      width: 92px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 4px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .icon:hover {
+      background: color-mix(in srgb, var(--accent-1) 12%, transparent);
+      border-color: color-mix(in srgb, var(--accent-1) 30%, transparent);
+    }
+
+    .icon .glyph {
+      font-size: 2rem;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    }
+
+    .icon span {
+      font-size: 0.78rem;
+      color: var(--text);
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ============ WINDOWS ============ */
+    .window {
+      position: absolute;
+      min-width: 300px;
+      min-height: 180px;
+      background: var(--window-glass);
+      backdrop-filter: blur(14px);
+      border: 1px solid color-mix(in srgb, var(--accent-1) 35%, transparent);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .window.minimized {
+      display: none;
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--accent-1) 22%, transparent),
+        transparent 70%);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent-1) 20%, transparent);
+      cursor: grab;
+    }
+
+    .titlebar:active {
+      cursor: grabbing;
+    }
+
+    .titlebar .t-glyph {
+      font-size: 1rem;
+    }
+
+    .titlebar h3 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .titlebar button {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      font-size: 0.7rem;
+      line-height: 1;
+      background: var(--bg-3);
+      color: var(--muted);
+    }
+
+    .titlebar button:hover {
+      background: var(--accent-1);
+      color: var(--accent-ink);
+    }
+
+    .window-body {
+      flex: 1;
+      overflow: auto;
+      padding: 16px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      user-select: text;
+    }
+
+    .window-body h4 {
+      color: var(--accent-2);
+      margin-bottom: 8px;
+    }
+
+    .window-body p {
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* ============ TASKBAR ============ */
+    #taskbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      background: color-mix(in srgb, var(--bg-1) 85%, transparent);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid color-mix(in srgb, var(--accent-1) 25%, transparent);
+      z-index: 500;
+    }
+
+    #launcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: 0.85rem;
+      color: var(--accent-ink);
+      background: linear-gradient(120deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-1) 35%, transparent);
+    }
+
+    #task-items {
+      flex: 1;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .task-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--bg-3) 70%, transparent);
+      white-space: nowrap;
+    }
+
+    .task-chip.active {
+      color: var(--text);
+      border-color: color-mix(in srgb, var(--accent-1) 45%, transparent);
+      background: color-mix(in srgb, var(--accent-1) 16%, transparent);
+    }
+
+    #clock {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      line-height: 1.3;
+    }
+
+    /* ============ START MENU ============ */
+    #start-menu {
+      position: fixed;
+      left: 14px;
+      bottom: 62px;
+      width: 260px;
+      padding: 12px;
+      border-radius: 16px;
+      background: var(--window-glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid color-mix(in srgb, var(--accent-1) 35%, transparent);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      z-index: 600;
+      display: none;
+    }
+
+    #start-menu.open {
+      display: block;
+    }
+
+    #start-menu header {
+      padding: 6px 10px 12px;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .menu-item:hover {
+      background: color-mix(in srgb, var(--accent-1) 15%, transparent);
+    }
+
+    /* ============ APP CONTENT ============ */
+    .server-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent-1) 18%, transparent);
+      background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+      margin-bottom: 8px;
+    }
+
+    .server-row .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #3ecf6a;
+      box-shadow: 0 0 8px #3ecf6a88;
+      flex-shrink: 0;
+    }
+
+    .server-row .info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .server-row .info strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .server-row .info em {
+      font-style: normal;
+      font-size: 0.75rem;
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .server-row code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--bg-1) 70%, transparent);
+      padding: 4px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .server-row code:hover {
+      color: var(--accent-2);
+    }
+
+    details.rule-block {
+      border: 1px solid color-mix(in srgb, var(--accent-1) 18%, transparent);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+    }
+
+    details.rule-block summary {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--accent-2);
+    }
+
+    details.rule-block ul {
+      list-style: none;
+      padding: 0 16px 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    details.rule-block li {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    details.rule-block li::before {
+      content: "◆ ";
+      color: var(--accent-1);
+    }
+
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    .theme-card {
+      border-radius: 12px;
+      border: 2px solid transparent;
+      padding: 10px;
+      cursor: pointer;
+      text-align: center;
+      background: color-mix(in srgb, var(--bg-2) 80%, transparent);
+    }
+
+    .theme-card.active {
+      border-color: var(--accent-1);
+    }
+
+    .theme-card .swatch {
+      height: 44px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .theme-card span {
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
+    #notes-area {
+      width: 100%;
+      height: 100%;
+      min-height: 220px;
+      resize: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    #term-out {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.84rem;
+      white-space: pre-wrap;
+      color: var(--text);
+    }
+
+    #term-out .accent {
+      color: var(--accent-2);
+    }
+
+    #term-line {
+      display: flex;
+      gap: 8px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.84rem;
+      margin-top: 6px;
+    }
+
+    #term-line span {
+      color: var(--accent-2);
+    }
+
+    #term-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div id="boot">
+    <div class="boot-logo">HERMES OS<small>VOXELBOX NETWORK</small></div>
+    <div class="boot-bar"><div></div></div>
+  </div>
+
+  <div id="desktop"></div>
+
+  <div id="start-menu">
+    <header>Hermes OS</header>
+    <div id="menu-apps"></div>
+  </div>
+
+  <nav id="taskbar">
+    <button id="launcher" type="button">⬡ HERMES</button>
+    <div id="task-items"></div>
+    <div id="clock"></div>
+  </nav>
+
+  <script>
+    "use strict";
+
+    /* ---------- data ---------- */
+    const SERVERS = [
+      { name: "Voxelbox-Minecraft", tag: "Survival Craft", ip: "0.0.0.0:25565" },
+      { name: "Voxelbox-StarRupture", tag: "Industrial Sci-Fi", ip: "0.0.0.0:7777" },
+      { name: "Voxelbox-BeamMP", tag: "Driving Sim", ip: "0.0.0.0:30814" },
+      { name: "Voxelbox-SOTF", tag: "Horror Survival", ip: "0.0.0.0:8766" },
+      { name: "Voxelbox-Enshrouded", tag: "Fantasy Survival", ip: "0.0.0.0:15637" },
+      { name: "Voxelbox-Palworld", tag: "Creature Co-op", ip: "0.0.0.0:8211" },
+      { name: "Voxelbox-Satisfactory", tag: "Factory Builder", ip: "0.0.0.0:7778" },
+    ];
+
+    const RULES = {
+      "Voxelbox-Minecraft": [
+        "No griefing, stealing, or unauthorized base entry.",
+        "Use respectful chat; hate speech and spam are zero tolerance.",
+        "Keep farms optimized to prevent lag and avoid chunk flooding.",
+        "Event arenas are safe zones unless flagged otherwise.",
+      ],
+      "Voxelbox-StarRupture": [
+        "Claimed outposts require permission before mining or building.",
+        "Coordinate large raids in faction channels to prevent friendly fire.",
+        "No exploitative resource duplication or physics abuse.",
+        "Respect PvE event timers and rotate boss loot fairly.",
+      ],
+      "Voxelbox-BeamMP": [
+        "Drive responsibly in cruise zones; no intentional ramming.",
+        "Follow event marshal directions during races or drift nights.",
+        "Use appropriate vehicles for track categories.",
+        "Report crashes or desync issues in the support channel.",
+      ],
+      "Voxelbox-SOTF": [
+        "No combat logging; stay in session until clear.",
+        "Raids must be announced in global chat before breaching.",
+        "Respect cooldowns on high-tier loot routes.",
+        "Solo players have a protected start period.",
+      ],
+      "Voxelbox-Enshrouded": [
+        "Do not tamper with flame altars belonging to other groups.",
+        "Keep shared quest hubs stocked and organized.",
+        "Cross-party trading should be fair and transparent.",
+        "Keep the shroud clean of bug exploits or terrain abuse.",
+      ],
+      "Voxelbox-Palworld": [
+        "No capture trapping or griefing of other players' pals.",
+        "Follow trading etiquette and keep markets scam-free.",
+        "Base territories require permission before expansion nearby.",
+        "Report glitches or duplicate pals to staff immediately.",
+      ],
+      "Voxelbox-Satisfactory": [
+        "Shared factory zones must stay organized and labeled.",
+        "Coordinate mega-builds with engineering leads.",
+        "Power grid changes require a heads-up in ops chat.",
+        "No dismantling others' machines without approval.",
+      ],
+    };
+
+    const THEMES = [
+      { id: "ember", name: "Ember", colors: ["#ff8a00", "#1c1f26"] },
+      { id: "midnight", name: "Midnight", colors: ["#4f7cff", "#101522"] },
+      { id: "frost", name: "Frost", colors: ["#2dd4da", "#122024"] },
+      { id: "verdant", name: "Verdant", colors: ["#3ecf6a", "#142016"] },
+      { id: "synthwave", name: "Synthwave", colors: ["#e14eca", "#1d1229"] },
+      { id: "daylight", name: "Daylight", colors: ["#e86f00", "#f4f2ee"] },
+    ];
+
+    /* ---------- theme engine ---------- */
+    function setTheme(id) {
+      if (!THEMES.some((t) => t.id === id)) return false;
+      document.documentElement.dataset.theme = id;
+      try { localStorage.setItem("hermes-theme", id); } catch (e) {}
+      document.querySelectorAll(".theme-card").forEach((c) => {
+        c.classList.toggle("active", c.dataset.theme === id);
+      });
+      return true;
+    }
+
+    try {
+      const saved = localStorage.getItem("hermes-theme");
+      if (saved) setTheme(saved);
+    } catch (e) {}
+
+    /* ---------- app registry ---------- */
+    const APPS = {
+      servers: {
+        title: "Servers",
+        glyph: "🌐",
+        w: 480,
+        h: 420,
+        render() {
+          return (
+            "<h4>Network Status</h4><p>Click an address to copy it.</p>" +
+            SERVERS.map(
+              (s) => `
+              <div class="server-row">
+                <span class="dot"></span>
+                <div class="info"><strong>${s.name}</strong><em>${s.tag}</em></div>
+                <code title="Copy address">${s.ip}</code>
+              </div>`
+            ).join("")
+          );
+        },
+        onOpen(body) {
+          body.querySelectorAll("code").forEach((c) => {
+            c.addEventListener("click", () => {
+              navigator.clipboard && navigator.clipboard.writeText(c.textContent);
+              const old = c.textContent;
+              c.textContent = "copied!";
+              setTimeout(() => (c.textContent = old), 900);
+            });
+          });
+        },
+      },
+      rules: {
+        title: "Rules Hub",
+        glyph: "📜",
+        w: 460,
+        h: 420,
+        render() {
+          return (
+            "<h4>Server Rulesets</h4>" +
+            Object.entries(RULES).map(
+              ([server, list]) => `
+              <details class="rule-block">
+                <summary>${server}</summary>
+                <ul>${list.map((r) => `<li>${r}</li>`).join("")}</ul>
+              </details>`
+            ).join("")
+          );
+        },
+      },
+      themes: {
+        title: "Themes",
+        glyph: "🎨",
+        w: 420,
+        h: 340,
+        render() {
+          return (
+            "<h4>Theme Gallery</h4><p>Reskins the whole OS. Your pick is remembered.</p>" +
+            '<div class="theme-grid">' +
+            THEMES.map(
+              (t) => `
+              <div class="theme-card${document.documentElement.dataset.theme === t.id ? " active" : ""}" data-theme="${t.id}">
+                <div class="swatch" style="background: linear-gradient(120deg, ${t.colors[0]}, ${t.colors[1]})"></div>
+                <span>${t.name}</span>
+              </div>`
+            ).join("") +
+            "</div>"
+          );
+        },
+        onOpen(body) {
+          body.querySelectorAll(".theme-card").forEach((card) => {
+            card.addEventListener("click", () => setTheme(card.dataset.theme));
+          });
+        },
+      },
+      notes: {
+        title: "Notes",
+        glyph: "📝",
+        w: 400,
+        h: 320,
+        render() {
+          return '<textarea id="notes-area" placeholder="Scratchpad — saved locally in your browser…"></textarea>';
+        },
+        onOpen(body) {
+          const area = body.querySelector("#notes-area");
+          try { area.value = localStorage.getItem("hermes-notes") || ""; } catch (e) {}
+          area.addEventListener("input", () => {
+            try { localStorage.setItem("hermes-notes", area.value); } catch (e) {}
+          });
+        },
+      },
+      terminal: {
+        title: "Terminal",
+        glyph: "⌨️",
+        w: 480,
+        h: 340,
+        render() {
+          return (
+            '<div id="term-out"><span class="accent">Hermes OS terminal</span> — type <span class="accent">help</span> for commands.\n</div>' +
+            '<div id="term-line"><span>vbx&gt;</span><input id="term-input" autocomplete="off" spellcheck="false" /></div>'
+          );
+        },
+        onOpen(body) {
+          const out = body.querySelector("#term-out");
+          const input = body.querySelector("#term-input");
+          const print = (txt) => {
+            out.innerHTML += txt + "\n";
+            body.scrollTop = body.scrollHeight;
+          };
+          const commands = {
+            help: () => print("commands: help, servers, rules <server>, theme <name>, themes, about, clear"),
+            servers: () => SERVERS.forEach((s) => print(`  ${s.name.padEnd(24)} ${s.ip}`)),
+            themes: () => print("  " + THEMES.map((t) => t.id).join(", ")),
+            about: () => print("Hermes OS — the Voxelbox network hub. Fast worlds, fair rules, friendly admins."),
+            clear: () => (out.innerHTML = ""),
+          };
+          input.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter") return;
+            const raw = input.value.trim();
+            input.value = "";
+            if (!raw) return;
+            print(`<span class="accent">vbx&gt;</span> ${raw.replace(/</g, "&lt;")}`);
+            const [cmd, ...rest] = raw.split(/\s+/);
+            const arg = rest.join(" ");
+            if (commands[cmd]) return commands[cmd]();
+            if (cmd === "theme") {
+              return setTheme(arg)
+                ? print(`theme set to ${arg}`)
+                : print(`unknown theme "${arg}" — try: ` + THEMES.map((t) => t.id).join(", "));
+            }
+            if (cmd === "rules") {
+              const key = Object.keys(RULES).find((k) => k.toLowerCase().includes(arg.toLowerCase()));
+              if (!arg || !key) return print('usage: rules <server>, e.g. "rules minecraft"');
+              print(key + ":");
+              return RULES[key].forEach((r) => print("  ◆ " + r));
+            }
+            print(`command not found: ${cmd}`);
+          });
+          input.focus();
+        },
+      },
+      about: {
+        title: "About Hermes OS",
+        glyph: "⬡",
+        w: 380,
+        h: 260,
+        render() {
+          return `
+            <h4>Hermes OS</h4>
+            <p>The Voxelbox network hub — a lightweight browser desktop for browsing servers,
+            reading the rules, and re-theming your experience.</p>
+            <p>Built for the <a href="../index.html" style="color: var(--accent-2)">Voxelbox</a>
+            game server network. Everything runs locally; notes and theme choice are stored
+            only in your browser.</p>`;
+        },
+      },
+    };
+
+    /* ---------- window manager ---------- */
+    const desktop = document.getElementById("desktop");
+    const taskItems = document.getElementById("task-items");
+    const openWindows = new Map();
+    let zTop = 10;
+    let spawnOffset = 0;
+
+    function focusWindow(win) {
+      win.style.zIndex = ++zTop;
+      document.querySelectorAll(".task-chip").forEach((c) => {
+        c.classList.toggle("active", c.dataset.app === win.dataset.app);
+      });
+    }
+
+    function openApp(id) {
+      const existing = openWindows.get(id);
+      if (existing) {
+        existing.classList.remove("minimized");
+        focusWindow(existing);
+        return;
+      }
+      const app = APPS[id];
+      const win = document.createElement("div");
+      win.className = "window";
+      win.dataset.app = id;
+      const maxW = Math.min(app.w, window.innerWidth - 24);
+      const maxH = Math.min(app.h, window.innerHeight - 90);
+      win.style.width = maxW + "px";
+      win.style.height = maxH + "px";
+      win.style.left = Math.max(12, 90 + spawnOffset * 34) % Math.max(60, window.innerWidth - maxW) + "px";
+      win.style.top = Math.max(12, 50 + spawnOffset * 26) % Math.max(60, window.innerHeight - maxH - 60) + "px";
+      spawnOffset = (spawnOffset + 1) % 8;
+
+      win.innerHTML = `
+        <div class="titlebar">
+          <span class="t-glyph">${app.glyph}</span>
+          <h3>${app.title}</h3>
+          <button type="button" data-act="min" title="Minimize">–</button>
+          <button type="button" data-act="close" title="Close">✕</button>
+        </div>
+        <div class="window-body">${app.render()}</div>`;
+
+      document.body.appendChild(win);
+      openWindows.set(id, win);
+      focusWindow(win);
+      if (app.onOpen) app.onOpen(win.querySelector(".window-body"));
+
+      const chip = document.createElement("button");
+      chip.className = "task-chip active";
+      chip.dataset.app = id;
+      chip.innerHTML = `${app.glyph} ${app.title}`;
+      chip.addEventListener("click", () => {
+        if (win.classList.contains("minimized")) {
+          win.classList.remove("minimized");
+          focusWindow(win);
+        } else if (win.style.zIndex == zTop) {
+          win.classList.add("minimized");
+          chip.classList.remove("active");
+        } else {
+          focusWindow(win);
+        }
+      });
+      taskItems.appendChild(chip);
+
+      win.addEventListener("mousedown", () => focusWindow(win));
+      win.querySelector('[data-act="close"]').addEventListener("click", () => {
+        win.remove();
+        chip.remove();
+        openWindows.delete(id);
+      });
+      win.querySelector('[data-act="min"]').addEventListener("click", () => {
+        win.classList.add("minimized");
+        chip.classList.remove("active");
+      });
+
+      /* drag */
+      const bar = win.querySelector(".titlebar");
+      bar.addEventListener("pointerdown", (e) => {
+        if (e.target.tagName === "BUTTON") return;
+        const startX = e.clientX - win.offsetLeft;
+        const startY = e.clientY - win.offsetTop;
+        const move = (ev) => {
+          win.style.left = Math.min(Math.max(ev.clientX - startX, -maxW + 80), window.innerWidth - 40) + "px";
+          win.style.top = Math.min(Math.max(ev.clientY - startY, 0), window.innerHeight - 90) + "px";
+        };
+        const up = () => {
+          document.removeEventListener("pointermove", move);
+          document.removeEventListener("pointerup", up);
+        };
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+      });
+    }
+
+    /* ---------- desktop icons + start menu ---------- */
+    const menuApps = document.getElementById("menu-apps");
+    Object.entries(APPS).forEach(([id, app]) => {
+      const icon = document.createElement("div");
+      icon.className = "icon";
+      icon.innerHTML = `<span class="glyph">${app.glyph}</span><span>${app.title}</span>`;
+      icon.addEventListener("dblclick", () => openApp(id));
+      icon.addEventListener("click", (e) => {
+        if (e.detail === 1 && "ontouchstart" in window) openApp(id);
+      });
+      desktop.appendChild(icon);
+
+      const item = document.createElement("button");
+      item.className = "menu-item";
+      item.type = "button";
+      item.innerHTML = `<span>${app.glyph}</span> ${app.title}`;
+      item.addEventListener("click", () => {
+        startMenu.classList.remove("open");
+        openApp(id);
+      });
+      menuApps.appendChild(item);
+    });
+
+    const startMenu = document.getElementById("start-menu");
+    document.getElementById("launcher").addEventListener("click", (e) => {
+      e.stopPropagation();
+      startMenu.classList.toggle("open");
+    });
+    document.addEventListener("click", (e) => {
+      if (!startMenu.contains(e.target)) startMenu.classList.remove("open");
+    });
+
+    /* ---------- clock ---------- */
+    const clock = document.getElementById("clock");
+    function tick() {
+      const now = new Date();
+      clock.innerHTML =
+        now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+        "<br>" +
+        now.toLocaleDateString([], { month: "short", day: "numeric" });
+    }
+    tick();
+    setInterval(tick, 15000);
+
+    /* ---------- boot ---------- */
+    setTimeout(() => {
+      document.getElementById("boot").classList.add("done");
+      openApp("servers");
+    }, 1600);
+  </script>
+</body>
+</html>
