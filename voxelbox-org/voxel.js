@@ -1,5 +1,6 @@
 /* VOXELBOX — voxel theme shell + interactions */
 const DISCORD = "https://discord.gg/mpeZ62uEEp";
+const GITHUB = "https://github.com/voxel-box";
 const STATUS_URL = "https://panel.voxelbox.org/vb-status/status.json";
 const NEWS_URL = "https://panel.voxelbox.org/vb-status/news.json";
 
@@ -220,10 +221,10 @@ function renderShell(){
     const links = NAV.map((n)=>{
       const active = n.id===page || n.children?.some((c)=>c.id===page);
       if (n.children){
-        const sub = n.children.map((c)=>`<a href="${c.href}" class="${c.id===page?"is-active":""}">${c.label}</a>`).join("");
+        const sub = n.children.map((c)=>`<a href="${c.href}" class="${c.id===page?"is-active":""}"${c.external?' target="_blank" rel="noopener noreferrer"':""}>${c.label}</a>`).join("");
         return `<div class="nav-group"><a class="nav-link ${active?"is-active":""}" href="${n.href}">${n.label}</a><div class="nav-menu">${sub}</div></div>`;
       }
-      return `<a class="nav-link ${active?"is-active":""}" href="${n.href}">${n.label}</a>`;
+      return `<a class="nav-link ${active?"is-active":""}" href="${n.href}"${n.external?' target="_blank" rel="noopener noreferrer"':""}>${n.label}</a>`;
     }).join("");
     head.innerHTML = `<header class="site-header"><div class="wrap nav">
       <a class="brand" href="index.html"><span class="cube"></span>Voxel<b>box</b></a>
