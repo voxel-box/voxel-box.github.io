@@ -96,3 +96,18 @@ reload, windows open/close, terminal commands respond.
   scratch in this repo because chat artifacts aren't retrievable across sessions.
   This repo is now the **source of truth** — treat the code here as canonical and
   evolve it in place rather than rebuilding.
+
+## Cursor Cloud specific instructions
+
+- **Nothing to install or build.** Zero-tooling static site; `python3` (system) is
+  all you need to serve it. The startup update script is only `python3 --version`.
+- **Serve over HTTP, not `file://`.** Run `python3 -m http.server 8000` from the repo
+  root, then use `http://localhost:8000/` (homepage), `http://localhost:8000/hermes/`
+  (Hermes OS), and `http://localhost:8000/voxelbox-org/`. HTTP is required because
+  `voxelbox-org/voxel-world.js` is an ES module (browsers block module imports over
+  `file://`).
+- **`voxelbox-org` CORS errors are expected here.** That page fetches live status from
+  `panel.voxelbox.org`, which is unreachable from the cloud VM, so the console shows
+  CORS/fetch errors. They are harmless — the pages and the Three.js scene still render.
+- **No lint/test/build tooling exists.** "Testing" = open the pages in a browser and
+  verify (see `## Verifying changes`). Hermes OS itself logs a clean console.
